@@ -1,5 +1,4 @@
-import React, {useEffect} from 'react'
-import {Auth} from 'aws-amplify'
+import React from 'react'
 import Container from './Container'
 import protectedRoute from './protectedRoute'
 

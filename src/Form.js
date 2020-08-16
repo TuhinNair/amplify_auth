@@ -37,7 +37,7 @@ async function confirmSignUp({ username, confirmationCode }, updateFormType) {
     }
 }
 
-async function ForgotPassword({ username }, updateFormType) {
+async function forgotPassword({ username }, updateFormType) {
     try {
         await Auth.forgotPassword(username)
         updateFormType('forgotPasswordSubmit')
@@ -90,14 +90,14 @@ function Form(props) {
                         updateFormState={e => updateForm(e)}
                     />
                 )
-            case 'forgorPassword':
+            case 'forgotPassword':
                 return (
                     <ForgotPassword
                         forgotPassword={() => forgotPassword(formState, updateFormType)}
                         updateFormState={e => updateForm(e)}
                     />
                 )
-            case 'forgorPasswordSubmit':
+            case 'forgotPasswordSubmit':
                 return (
                     <ForgotPasswordSubmit
                         forgotPasswordSubmit={() => forgotPasswordSubmit(formState, updateFormType)}
