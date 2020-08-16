@@ -1,25 +1,25 @@
-import React, {useState} from 'react'
-import {Auth} from 'aws-amplify'
+import React, { useState } from 'react'
+import { Auth } from 'aws-amplify'
 import SignIn from './SignIn'
 import SignUp from './SignUp'
 import ConfirmSignUp from './ConfirmSignUp'
 import ForgotPassword from './ForgotPassword'
 import ForgotPasswordSubmit from './ForgotPasswordSubmit'
 
-async function signIn({username, password}, setUser) {
+async function signIn({ username, password }, setUser) {
     try {
         const user = await Auth.signIn(username, password)
-        const userInfo = {username: user.username, ...user.attributes}
+        const userInfo = { username: user.username, ...user.attributes }
         setUser(userInfo)
     } catch (err) {
         console.log('error signing in: ', err)
     }
 }
 
-async function signUp({username, password, email}, updateFormType) {
+async function signUp({ username, password, email }, updateFormType) {
     try {
         await Auth.signUp({
-            username, password, attributes: {email}
+            username, password, attributes: { email }
         });
         console.log('Sign up success')
         updateFormType('confirmSignUp')
@@ -28,7 +28,7 @@ async function signUp({username, password, email}, updateFormType) {
     }
 }
 
-async function confirmSignUp({username, confirmationCode}, updateFormType) {
+async function confirmSignUp({ username, confirmationCode }, updateFormType) {
     try {
         await Auth.confirmSignUp(username, confirmationCode)
         updateFormType('signIn')
@@ -37,7 +37,7 @@ async function confirmSignUp({username, confirmationCode}, updateFormType) {
     }
 }
 
-async function ForgotPassword({username}, updateFormType) {
+async function ForgotPassword({ username }, updateFormType) {
     try {
         await Auth.forgotPassword(username)
         updateFormType('forgotPasswordSubmit')
@@ -46,7 +46,7 @@ async function ForgotPassword({username}, updateFormType) {
     }
 }
 
-async function forgotPasswordSubmit({username, confirmationCode, password}, updateFormType) {
+async function forgotPasswordSubmit({ username, confirmationCode, password }, updateFormType) {
     try {
         await Auth.forgotPasswordSubmit(username, confirmationCode, password)
         updateFormType('signIn')
@@ -70,7 +70,7 @@ function Form(props) {
         updateFormState(newFormState)
     }
     function renderForm() {
-        switch(formType) {
+        switch (formType) {
             case 'signUp':
                 return (<SignUp
                     signUp={() => signUp(formState, updateFormType)}
@@ -78,7 +78,7 @@ function Form(props) {
                 />)
             case 'confirmSignUp':
                 return (
-                    <ConfirmSignUp 
+                    <ConfirmSignUp
                         confirmSignUp={() => confirmSignUp(formState, updateFormType)}
                         updateFormState={e => updateForm(e)}
                     />
@@ -113,6 +113,25 @@ function Form(props) {
     return (
         <div>
             {renderForm()}
+            {
+                formType === 'signUp' && (
+                    <p style={styles.toggleForm}>
+                        Already have an account? <span style={styles.anchor} onClick={() => updateFormType('signIn')}>Sign In</span>
+                    </p>
+                )
+            }
+            {
+                formType === 'signIn' && (
+                    <>
+                        <p style={styles.toggleForm}>
+                            Need an account? <span style={styles.anchor} onClick={() => updateFormType('signUp')}>Sign Up</span>
+                        </p>
+                        <p style={{ ...styles.toggleForm, ...styles.resetPassword }}>
+                            Forgot your Password?<span style={styles.anchor} onClick={() => updateFormType('forgotPassword')}>Reset Password</span>
+                        </p>
+                    </>
+                )
+            }
         </div>
     )
 }
@@ -142,7 +161,7 @@ const styles = {
         marginTop: '15px',
         marginBottom: 0,
         textAlign: 'center',
-        color: 'rgba(0, 0, 0, 0.6)'   
+        color: 'rgba(0, 0, 0, 0.6)'
     },
     resetPassword: {
         marginTop: '5px',
@@ -153,4 +172,4 @@ const styles = {
     }
 }
 
-export {styles, Form as default}
+export { styles, Form as default }
